@@ -151,8 +151,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Special thanks to all contributors and testers
 
 ## Contact
-
-For any inquiries or issues, please contact [team@auctosafe.com](mailto:team@auctosafe.com).
+No one as of now.
 
 ---
 
