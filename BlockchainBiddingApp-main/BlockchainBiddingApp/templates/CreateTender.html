@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Tender - Blockchain Bidding System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link href="{% static 'default.css' %}" rel="stylesheet" type="text/css" media="screen" />
+    <!-- Include existing datetimepicker JS -->
+    <script language="javascript" type="text/javascript" src="{% static 'datetimepicker.js' %}"></script>
+    <script>
+        function validateCreateTenderForm(){
+            function showAlert(message, fieldName) {
+                alert(message);
+                // Use field name directly as inputs should have corresponding name attributes
+                document.forms["createTenderForm"][fieldName].focus();
+                return false;
+            }
+
+            var title = document.forms["createTenderForm"]["t1"].value;
+            var description = document.forms["createTenderForm"]["t2"].value;
+            var openDate = document.forms["createTenderForm"]["t3"].value; // Corresponds to id="demo"
+            var closeDate = document.forms["createTenderForm"]["t4"].value; // Corresponds to id="demo1"
+            var amount = document.forms["createTenderForm"]["t5"].value;
+
+            if (title == null || title == "") return showAlert("Tender title must be entered", "t1");
+            if (description == null || description == "") return showAlert("Description must be entered", "t2");
+            if (openDate == null || openDate == "") return showAlert("Open date must be chosen", "t3");
+            if (closeDate == null || closeDate == "") return showAlert("Close date must be chosen", "t4");
+            if (amount == null || amount == "") return showAlert("Amount must be entered", "t5");
+            if (isNaN(amount)) return showAlert("Please enter a valid amount", "t5");
+
+            // Optional: Add date comparison logic if needed (e.g., close date after open date)
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+<!-- Officer Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'TenderScreen' %}">Officer Dashboard</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#officerNavbar" aria-controls="officerNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="officerNavbar">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'TenderScreen' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'CreateTender' %}">Create Tender</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'EvaluateTender' %}">Evaluate Tenders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'WinnerSelection' %}">Select Winner</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="content-section p-4">
+            <h3 class="text-center mb-4">Create New Tender</h3>
+
+            {% if data %}
+              <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {{ data|safe }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+
+            <form name="createTenderForm" method="post" action="{% url 'CreateTenderAction' %}" onsubmit="return validateCreateTenderForm()">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="tenderTitle" class="form-label">Tender Title</label>
+                    <input type="text" class="form-control" id="tenderTitle" name="t1" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tenderDescription" class="form-label">Tender Description</label>
+                    <textarea class="form-control" id="tenderDescription" name="t2" rows="3" required></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="demo" class="form-label">Open Date</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="demo" name="t3" maxlength="25" required readonly>
+                             <a href="javascript:NewCal('demo','ddmmyyyy',false,24)" class="btn btn-outline-secondary" title="Pick a date"><img src="{% static 'cal.gif' %}" alt="Calendar" style="vertical-align: middle;"></a>
+                        </div>
+                        <small class="text-muted">Format: ddmmyyyy</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="demo1" class="form-label">Close Date</label>
+                         <div class="input-group">
+                            <input type="text" class="form-control" id="demo1" name="t4" maxlength="25" required readonly>
+                            <a href="javascript:NewCal('demo1','ddmmyyyy',false,24)" class="btn btn-outline-secondary" title="Pick a date"><img src="{% static 'cal.gif' %}" alt="Calendar" style="vertical-align: middle;"></a>
+                        </div>
+                         <small class="text-muted">Format: ddmmyyyy</small>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="tenderAmount" class="form-label">Tender Amount (Base)</label>
+                    <input type="number" step="0.01" class="form-control" id="tenderAmount" name="t5" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Create Tender</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>

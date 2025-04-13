@@ -1,0 +1,5 @@
+numpy>=1.22
+Django>=4.2,<5.0
+eciespy>=0.4.0
+
+ 
